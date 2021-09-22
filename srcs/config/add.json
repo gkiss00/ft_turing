@@ -2,7 +2,7 @@
     "name" : "add_machine",
     "alphabet" : ["1", "+"],
     "blank" : ".",
-    "states" : ["skip", "add", "new", "HALT", "ERROR"],
+    "states" : ["skip", "add", "new", "will_stop", "HALT", "ERROR"],
     "initial" : "skip",
     "finals" : ["HALT", "ERROR"],
     "transitions" : {
@@ -12,10 +12,13 @@
         ],
         "add" : [
             { "read" : "1", "to_state": "new", "write": "+", "action": "LEFT"},
-            { "read" : ".", "to_state": "HALT", "write": ".", "action": "RIGHT"}
+            { "read" : ".", "to_state": "will_stop", "write": ".", "action": "LEFT"}
         ],
         "new" : [
             { "read" : "+", "to_state": "skip", "write": "1", "action": "RIGHT"}
+        ],
+        "will_stop" : [
+            { "read" : "+", "to_state": "HALT", "write": ".", "action": "RIGHT"}
         ]
     }
 }
