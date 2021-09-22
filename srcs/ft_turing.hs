@@ -39,7 +39,7 @@ data Config = Config {
     states :: [String],
     initial :: String,
     finals :: [String]
-} deriving Generic
+} deriving (Show, Generic)
 
 instance FromJSON Config
 
@@ -50,11 +50,20 @@ main = do
     let mm = decode input :: Maybe Config
     case mm of
         Nothing -> print "Error in config"
-        Just m -> (putStrLn.greet) m
+        Just m -> outputConfig m
 
 getJsonFile = do
     args <- getArgs
     return $ head args
+
+outputConfig :: Config-> IO ()
+outputConfig (Config n a b s i f) = do
+    putStrLn ("name:     " ++ (show n))
+    putStrLn ("alphabet: " ++ (show a))
+    putStrLn ("blank:    " ++ (show b))
+    putStrLn ("states:   " ++ (show s))
+    putStrLn ("initial:  " ++ (show i))
+    putStrLn ("finals:   " ++ (show f))
 
 greet m = (show.name) m ++ "\n" ++ (show.alphabet) m
 
