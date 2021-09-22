@@ -1,24 +1,45 @@
 {
     "name" : "palindrome_machine",
-    "alphabet" : ["1", "+"],
+    "alphabet" : ["a", "b"],
     "blank" : ".",
-    "states" : ["skip", "add", "new", "will_stop", "HALT", "ERROR"],
-    "initial" : "skip",
-    "finals" : ["HALT", "ERROR"],
+    "states" : ["init", "find_a", "find_b", "erase_a", "erase_b", "go_to_init", "fail", "exit_success", "exit_failure"],
+    "initial" : "init",
+    "finals" : ["exit_success", "exit_failure"],
     "transitions" : {
-        "skip" : [
-            { "read" : "1", "to_state": "skip", "write": "1", "action": "RIGHT"},
-            { "read" : "+", "to_state": "add", "write": "+", "action": "RIGHT"}
+        "init" : [
+            { "read" : "a", "to_state": "find_a", "write": ".", "action": "RIGHT"},
+            { "read" : "b", "to_state": "find_b", "write": ".", "action": "RIGHT"},
+            { "read" : ".", "to_state": "exit_success", "write": "y", "action": "RIGHT"}
         ],
-        "add" : [
-            { "read" : "1", "to_state": "new", "write": "+", "action": "LEFT"},
-            { "read" : ".", "to_state": "will_stop", "write": ".", "action": "LEFT"}
+        "find_b" : [
+            { "read" : "a", "to_state": "find_b", "write": "a", "action": "RIGHT"},
+            { "read" : "b", "to_state": "find_b", "write": "b", "action": "RIGHT"},
+            { "read" : ".", "to_state": "erase_b", "write": ".", "action": "LEFT"}
         ],
-        "new" : [
-            { "read" : "+", "to_state": "skip", "write": "1", "action": "RIGHT"}
+        "erase_b" : [
+            { "read" : "a", "to_state": "fail", "write": ".", "action": "RIGHT"},
+            { "read" : "b", "to_state": "go_to_init", "write": ".", "action": "LEFT"},
+            { "read" : ".", "to_state": "exit_success", "write": "y", "action": "RIGHT"}
         ],
-        "will_stop" : [
-            { "read" : "+", "to_state": "HALT", "write": ".", "action": "RIGHT"}
+        "find_a" : [
+            { "read" : "a", "to_state": "find_a", "write": "a", "action": "RIGHT"},
+            { "read" : "b", "to_state": "find_a", "write": "b", "action": "RIGHT"},
+            { "read" : ".", "to_state": "erase_a", "write": ".", "action": "LEFT"}
+        ],
+        "erase_a" : [
+            { "read" : "a", "to_state": "go_to_init", "write": ".", "action": "LEFT"},
+            { "read" : "b", "to_state": "fail", "write": ".", "action": "RIGHT"},
+            { "read" : ".", "to_state": "exit_success", "write": "y", "action": "RIGHT"}
+        ],
+        "go_to_init" : [
+            { "read" : "a", "to_state": "go_to_init", "write": "a", "action": "LEFT"},
+            { "read" : "b", "to_state": "go_to_init", "write": "b", "action": "LEFT"},
+            { "read" : ".", "to_state": "init", "write": ".", "action": "RIGHT"}
+        ],
+        "fail" : [
+            { "read" : "a", "to_state": "fail", "write": "a", "action": "RIGHT"},
+            { "read" : "b", "to_state": "fail", "write": "b", "action": "RIGHT"},
+            { "read" : ".", "to_state": "exit_failure", "write": "n", "action": "RIGHT"}
         ]
     }
 }
