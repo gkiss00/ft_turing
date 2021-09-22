@@ -1,0 +1,34 @@
+{
+    "name" : "0n1n_machine",
+    "alphabet" : ["0", "1"],
+    "blank" : ".",
+    "states" : ["zero", "last_one", "erase_one", "first_zero", "fail", "exit_success", "exit_failure"],
+    "initial" : "zero",
+    "finals" : ["exit_success", "exit_failure"],
+    "transitions" : {
+        "zero" : [
+            { "read" : "0", "to_state": "last_one", "write": ".", "action": "RIGHT"},
+            { "read" : "1", "to_state": "fail", "write": ".", "action": "RIGHT"},
+            { "read" : ".", "to_state": "exit_success", "write": "y", "action": "RIGHT"}
+        ],
+        "last_one" : [
+            { "read" : "0", "to_state": "last_one", "write": "0", "action": "RIGHT"},
+            { "read" : "1", "to_state": "last_one", "write": "1", "action": "RIGHT"},
+            { "read" : ".", "to_state": "erase_one", "write": ".", "action": "LEFT"}
+        ],
+        "erase_one" : [
+            { "read" : "0", "to_state": "fail", "write": ".", "action": "RIGHT"},
+            { "read" : "1", "to_state": "first_zero", "write": ".", "action": "LEFT"}
+        ],
+        "first_zero" : [
+            { "read" : "0", "to_state": "first_zero", "write": "0", "action": "LEFT"},
+            { "read" : "1", "to_state": "first_zero", "write": "1", "action": "LEFT"},
+            { "read" : ".", "to_state": "zero", "write": ".", "action": "RIGHT"}
+        ],
+        "fail" : [
+            { "read" : "0", "to_state": "fail", "write": "0", "action": "RIGHT"},
+            { "read" : "1", "to_state": "fail", "write": "1", "action": "RIGHT"},
+            { "read" : ".", "to_state": "exit_failure", "write": "n", "action": "RIGHT"}
+        ]
+    }
+}

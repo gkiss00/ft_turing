@@ -1,5 +1,5 @@
 {
-    "name" : "add_machine",
+    "name" : "unary_addition_machine",
     "alphabet" : ["1", "+"],
     "blank" : ".",
     "states" : ["skip", "add", "new", "will_stop", "HALT", "ERROR"],
