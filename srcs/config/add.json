@@ -1,0 +1,21 @@
+{
+    "name" : "add_machine",
+    "alphabet" : ["1", "+"],
+    "blank" : ".",
+    "states" : ["skip", "add", "new", "HALT", "ERROR"],
+    "initial" : "skip",
+    "finals" : ["HALT", "ERROR"],
+    "transitions" : {
+        "skip" : [
+            { "read" : "1", "to_state": "skip", "write": "1", "action": "RIGHT"},
+            { "read" : "+", "to_state": "add", "write": "+", "action": "RIGHT"}
+        ],
+        "add" : [
+            { "read" : "1", "to_state": "new", "write": "+", "action": "LEFT"},
+            { "read" : ".", "to_state": "HALT", "write": ".", "action": "RIGHT"}
+        ],
+        "new" : [
+            { "read" : "+", "to_state": "skip", "write": "1", "action": "RIGHT"}
+        ]
+    }
+}
