@@ -2,20 +2,16 @@
     "name" : "02n_machine",
     "alphabet" : ["0"],
     "blank" : ".",
-    "states" : ["init", "erase_next_zero", "fail", "exit_success", "exit_failure"],
-    "initial" : "init",
+    "states" : ["erase_odd_zero", "erase_even_zero", "exit_success", "exit_failure"],
+    "initial" : "erase_odd_zero",
     "finals" : ["exit_success", "exit_failure"],
     "transitions" : {
-        "init" : [
-            { "read" : "0", "to_state": "erase_next_zero", "write": ".", "action": "RIGHT"},
+        "erase_odd_zero" : [
+            { "read" : "0", "to_state": "erase_even_zero", "write": ".", "action": "RIGHT"},
             { "read" : ".", "to_state": "exit_success", "write": "y", "action": "RIGHT"}
         ],
-        "erase_next_zero" : [
-            { "read" : "0", "to_state": "init", "write": ".", "action": "RIGHT"},
-            { "read" : ".", "to_state": "fail", "write": ".", "action": "RIGHT"}
-        ],
-        "fail" : [
-            { "read" : "0", "to_state": "fail", "write": "0", "action": "RIGHT"},
+        "erase_even_zero" : [
+            { "read" : "0", "to_state": "erase_odd_zero", "write": ".", "action": "RIGHT"},
             { "read" : ".", "to_state": "exit_failure", "write": "n", "action": "RIGHT"}
         ]
     }

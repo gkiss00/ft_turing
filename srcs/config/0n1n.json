@@ -18,7 +18,8 @@
         ],
         "erase_one" : [
             { "read" : "0", "to_state": "fail", "write": ".", "action": "RIGHT"},
-            { "read" : "1", "to_state": "first_zero", "write": ".", "action": "LEFT"}
+            { "read" : "1", "to_state": "first_zero", "write": ".", "action": "LEFT"},
+            { "read" : ".", "to_state": "exit_failure", "write": "n", "action": "LEFT"}
         ],
         "first_zero" : [
             { "read" : "0", "to_state": "first_zero", "write": "0", "action": "LEFT"},

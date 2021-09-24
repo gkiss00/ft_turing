@@ -2,23 +2,21 @@
     "name" : "unary_addition_machine",
     "alphabet" : ["1", "+"],
     "blank" : ".",
-    "states" : ["skip", "add", "new", "will_stop", "HALT", "ERROR"],
-    "initial" : "skip",
-    "finals" : ["HALT", "ERROR"],
+    "states" : ["return_left", "add", "erase", "HALT"],
+    "initial" : "add",
+    "finals" : ["HALT"],
     "transitions" : {
-        "skip" : [
-            { "read" : "1", "to_state": "skip", "write": "1", "action": "RIGHT"},
-            { "read" : "+", "to_state": "add", "write": "+", "action": "RIGHT"}
-        ],
         "add" : [
-            { "read" : "1", "to_state": "new", "write": "+", "action": "LEFT"},
-            { "read" : ".", "to_state": "will_stop", "write": ".", "action": "LEFT"}
+            { "read" : "1", "to_state": "add", "write": "1", "action": "RIGHT"},
+            { "read" : "+", "to_state": "return_left", "write": "1", "action": "LEFT"},
+            { "read" : ".", "to_state": "HALT", "write": ".", "action": "RIGHT"}
         ],
-        "new" : [
-            { "read" : "+", "to_state": "skip", "write": "1", "action": "RIGHT"}
+        "return_left" : [
+            { "read" : "1", "to_state": "return_left", "write": "1", "action": "LEFT"},
+            { "read" : ".", "to_state": "erase", "write": ".", "action": "RIGHT"}
         ],
-        "will_stop" : [
-            { "read" : "+", "to_state": "HALT", "write": ".", "action": "RIGHT"}
+        "erase" : [
+            { "read" : "1", "to_state": "add", "write": ".", "action": "RIGHT"}
         ]
     }
 }
