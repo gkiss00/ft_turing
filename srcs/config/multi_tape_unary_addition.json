@@ -24,8 +24,8 @@
             },
             {
                 "steps" : {
-                    "tape1" : {"read" : ".", "write": ".", "action": "RIGHT"},
-                    "tape2" : {"read" : ".", "write": ".", "action": "RIGHT"}
+                    "tape1" : {"read" : ".", "write": ".", "action": "STAY"},
+                    "tape2" : {"read" : ".", "write": ".", "action": "STAY"}
                 },
                 "to_state" : "HALT"
             }

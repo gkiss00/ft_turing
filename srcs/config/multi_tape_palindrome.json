@@ -33,50 +33,50 @@
         "back" : [
             {
                 "steps" : {
-                    "tape1" : {"read" : "a", "write": "a", "action": "STAY"},
-                    "tape2" : {"read" : "a", "write": "a", "action": "LEFT"}
+                    "tape1" : {"read" : "a", "write": "a", "action": "LEFT"},
+                    "tape2" : {"read" : "a", "write": "a", "action": "STAY"}
                 },
                 "to_state" : "back"
             },
             {
                 "steps" : {
-                    "tape1" : {"read" : "a", "write": "a", "action": "STAY"},
-                    "tape2" : {"read" : "b", "write": "b", "action": "LEFT"}
+                    "tape1" : {"read" : "a", "write": "a", "action": "LEFT"},
+                    "tape2" : {"read" : "b", "write": "b", "action": "STAY"}
                 },
                 "to_state" : "back"
             },
             {
                 "steps" : {
-                    "tape1" : {"read" : "b", "write": "b", "action": "STAY"},
-                    "tape2" : {"read" : "b", "write": "b", "action": "LEFT"}
+                    "tape1" : {"read" : "b", "write": "b", "action": "LEFT"},
+                    "tape2" : {"read" : "b", "write": "b", "action": "STAY"}
                 },
                 "to_state" : "back"
             },
             {
                 "steps" : {
-                    "tape1" : {"read" : "b", "write": "b", "action": "STAY"},
-                    "tape2" : {"read" : "a", "write": "a", "action": "LEFT"}
+                    "tape1" : {"read" : "b", "write": "b", "action": "LEFT"},
+                    "tape2" : {"read" : "a", "write": "a", "action": "STAY"}
                 },
                 "to_state" : "back"
             },
             {
                 "steps" : {
-                    "tape1" : {"read" : "a", "write": "a", "action": "STAY"},
-                    "tape2" : {"read" : ".", "write": ".", "action": "RIGHT"}
+                    "tape1" : {"read" : ".", "write": ".", "action": "RIGHT"},
+                    "tape2" : {"read" : "a", "write": "a", "action": "STAY"}
                 },
                 "to_state" : "cmp"
             },
             {
                 "steps" : {
-                    "tape1" : {"read" : "b", "write": "b", "action": "STAY"},
-                    "tape2" : {"read" : ".", "write": ".", "action": "RIGHT"}
+                    "tape1" : {"read" : ".", "write": ".", "action": "RIGHT"},
+                    "tape2" : {"read" : "b", "write": "b", "action": "STAY"}
                 },
                 "to_state" : "cmp"
             },
             {
                 "steps" : {
-                    "tape1" : {"read" : ".", "write": ".", "action": "STAY"},
-                    "tape2" : {"read" : ".", "write": ".", "action": "RIGHT"}
+                    "tape1" : {"read" : ".", "write": ".", "action": "RIGHT"},
+                    "tape2" : {"read" : ".", "write": ".", "action": "STAY"}
                 },
                 "to_state" : "cmp"
             }
@@ -84,35 +84,35 @@
         "cmp" : [
             {
                 "steps" : {
-                    "tape1" : {"read" : "a", "write": "a", "action": "LEFT"},
-                    "tape2" : {"read" : "a", "write": "a", "action": "RIGHT"}
+                    "tape1" : {"read" : "a", "write": "a", "action": "RIGHT"},
+                    "tape2" : {"read" : "a", "write": ".", "action": "LEFT"}
                 },
                 "to_state" : "cmp"
             },
             {
                 "steps" : {
-                    "tape1" : {"read" : "b", "write": "b", "action": "LEFT"},
-                    "tape2" : {"read" : "b", "write": "b", "action": "RIGHT"}
+                    "tape1" : {"read" : "b", "write": "b", "action": "RIGHT"},
+                    "tape2" : {"read" : "b", "write": ".", "action": "LEFT"}
                 },
                 "to_state" : "cmp"
             },
             {
                 "steps" : {
-                    "tape1" : {"read" : "b", "write": "b", "action": "LEFT"},
-                    "tape2" : {"read" : "a", "write": "n", "action": "RIGHT"}
+                    "tape1" : {"read" : "b", "write": "b", "action": "STAY"},
+                    "tape2" : {"read" : "a", "write": "n", "action": "STAY"}
                 },
                 "to_state" : "HALT"
             },
             {
                 "steps" : {
-                    "tape1" : {"read" : "b", "write": "b", "action": "LEFT"},
-                    "tape2" : {"read" : "a", "write": "n", "action": "RIGHT"}
+                    "tape1" : {"read" : "a", "write": "a", "action": "STAY"},
+                    "tape2" : {"read" : "b", "write": "n", "action": "STAY"}
                 },
                 "to_state" : "HALT"
             },
             {
                 "steps" : {
-                    "tape1" : {"read" : ".", "write": ".", "action": "LEFT"},
+                    "tape1" : {"read" : ".", "write": ".", "action": "STAY"},
                     "tape2" : {"read" : ".", "write": "y", "action": "STAY"}
                 },
                 "to_state" : "HALT"

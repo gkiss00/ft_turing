@@ -123,25 +123,27 @@ start config input = do
     let indexes = initIndexes config
     let tapes = initTapes config input
     let currentState = initial config
-    run config tapes currentState indexes
+    run config currentState tapes  indexes
 
-run :: Config -> [String] -> String -> [Int] -> IO ()
-run config tapes currentState indexes = do
+run :: Config ->  String -> [String] -> [Int] -> IO ()
+run config currentState tapes  heads = do
     -- if current state == final state exit
     if currentState `elem` finals config
-        then outputTapes tapes indexes 0
+        then do
+            putStrLn "Result"
+            outputTapes tapes heads 0
         else do
-            outputTapes tapes indexes 0
+            outputTapes tapes heads 0
             -- get current transition
-            let transition = getNextTransition config currentState tapes indexes 0
+            let transition = getNextTransition config currentState tapes heads 0
             --  modify tapes
-            let new_tapes = modifyTapes tapes indexes transition 0
+            let new_tapes = modifyTapes tapes heads transition 0
             -- move heads
-            let new_heads = modifyIndexes indexes transition 0
+            let new_heads = modifyIndexes config heads transition 0
             -- set next state
-            let next_state = to_state transition
+            let new_state = to_state transition
             --putStrLn new_tape
-            run config new_tapes next_state new_heads
+            run config new_state new_tapes  new_heads
 
 increment :: Int -> Int
 increment x = x + 1
@@ -153,7 +155,7 @@ initTapes :: Config -> String -> [String]
 initTapes config input = replicate 1 (fullyTape config input) ++ replicate (nb_tapes config - 1) (emptyTape config input)
 
 initIndexes :: Config -> [Int]
-initIndexes config = replicate (nb_tapes config - 1) 1
+initIndexes config = replicate (nb_tapes config) 1
 
 duplicate :: String -> Int -> String
 duplicate str n = concat $ replicate n str
@@ -179,12 +181,12 @@ test transition tapes indexes i max = (i == max) || (Main.read (steps transition
 modifyTapes :: [String] -> [Int] -> Transition -> Int -> [String]
 modifyTapes tapes indexes transition i = if i == length tapes
     then replicate 0 ""
-    else replicate 1 (Data.List.take (indexes !! i) (tapes !! i) ++ write (steps transition ! ("tape" ++ show 1)) ++ Data.List.drop ((indexes !! i) + 1) (tapes !! i)) ++ modifyTapes tapes indexes transition (i + 1)
+    else replicate 1 (Data.List.take (indexes !! i) (tapes !! i) ++ write (steps transition ! ("tape" ++ show (i + 1))) ++ Data.List.drop ((indexes !! i) + 1) (tapes !! i)) ++ modifyTapes tapes indexes transition (i + 1)
 
-modifyIndexes :: [Int] -> Transition -> Int -> [Int]
-modifyIndexes indexes transition i = if i == length indexes
-    then []
-    else replicate 1 (updateIndex (indexes !! i) (action (steps transition ! ("tape" ++ show i)))) ++ modifyIndexes indexes transition (i + 1)
+modifyIndexes :: Config -> [Int] -> Transition -> Int -> [Int]
+modifyIndexes config indexes transition i = if i == nb_tapes config
+    then replicate 0 1
+    else replicate 1 (updateIndex (indexes !! i) (action (steps transition ! ("tape" ++ show (i + 1))))) ++ modifyIndexes config indexes transition (i + 1)
 
 updateIndex :: Int -> String -> Int
 updateIndex i "RIGHT" = i + 1
@@ -194,6 +196,7 @@ updateIndex i _ = i
 outputTapes :: [String] -> [Int] -> Int -> IO ()
 outputTapes tapes indexes i = do
     if i < length tapes
-        then putStrLn ("[" ++ Data.List.take (indexes !! i) (tapes !! i) ++ "<" ++ (tapes !! i) ++">" ++ Data.List.drop ((indexes !! i) + 1) (tapes !! i) ++ "]")
+        then do
+            putStrLn ("[" ++ Data.List.take (indexes !! i) (tapes !! i) ++ "<" ++ replicate 1 ((tapes !! i) !! (indexes !! i)) ++">" ++ Data.List.drop ((indexes !! i) + 1) (tapes !! i) ++ "]")
+            outputTapes tapes indexes (i + 1)
         else putStrLn ""
-    outputTapes tapes indexes (i + 1)
