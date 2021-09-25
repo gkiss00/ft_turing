@@ -26,8 +26,8 @@ data Step = Step {
     action :: String
 } deriving (Show, Generic)
 
-data Step = Transition {
-    tapes :: Map String Step,
+data Transition = Transition {
+    steps :: Map String Step,
     to_state :: String
 } deriving (Show, Generic)
 
@@ -35,7 +35,7 @@ data Config = Config {
     name :: String,
     alphabet :: [String],
     blank :: String,
-    state :: Int
+    nb_tapes :: Int,
     states :: [String],
     initial :: String,
     finals :: [String],
@@ -48,7 +48,7 @@ instance FromJSON Step
 
 -- CONST
 
-data TAPE = "tape"
+-- Main
 
 
 main = do
@@ -73,37 +73,38 @@ outputUsage = do
     putStrLn "\t<-h / --help>\t\tshow this help message and exit"
 
 outputConfig :: Config -> IO ()
-outputConfig (Config name alphabet blank states initial finals transitions) = do
+outputConfig (Config name alphabet blank nb_tapes states initial finals transitions) = do
     putStrLn "****************************************"
     putStrLn ""
-    putStrLn ("          " ++ (name))
+    putStrLn ("          " ++ name)
     putStrLn ""
     putStrLn "****************************************"
-    putStrLn ("alphabet: " ++ (show alphabet))
-    putStrLn ("states:   " ++ (show states))
-    putStrLn ("initial:  " ++ (initial))
-    putStrLn ("finals:   " ++ (show finals))
-    outputTransitions states transitions 0 (length states)
+    putStrLn ("alphabet: " ++ show alphabet)
+    putStrLn ("states:   " ++ show nb_tapes)
+    putStrLn ("states:   " ++ show states)
+    putStrLn ("initial:  " ++ initial)
+    putStrLn ("finals:   " ++ show finals)
+    -- outputTransitions states transitions 0 (length states)
 
-outputTransitions :: [String] -> Map String [Step] -> Int -> Int -> IO ()
-outputTransitions list map i s = do
-    if i < s
-        then do
-            putStrLn (list !! i)
-            if i < (size map)
-                then do
-                    outputSteps (map ! (list !! i)) 0 (length (map ! (list !! i)))
-                else putStrLn ""
-            outputTransitions list map (i + 1) s
-        else putStrLn ""
+-- outputTransitions :: [String] -> Map String [Transition] -> Int -> Int -> IO ()
+-- outputTransitions list map i s = do
+--     if i < s
+--         then do
+--             putStrLn (list !! i)
+--             if i < size map
+--                 then do
+--                     outputSteps (map ! (list !! i)) 0 (length (map ! (list !! i)))
+--                 else putStrLn ""
+--             outputTransitions list map (i + 1) s
+--         else putStrLn ""
 
-outputSteps :: [Step] -> Int -> Int -> IO ()
-outputSteps list i size = do
-    if i < size
-        then do
-            putStrLn ("\t" ++ (show (list !! i)))
-            outputSteps list (i + 1) size
-        else putStrLn ""
+-- outputSteps :: [Step] -> Int -> Int -> IO ()
+-- outputSteps list i size = do
+--     if i < size
+--         then do
+--             putStrLn ("\t" ++ (show (list !! i)))
+--             outputSteps list (i + 1) size
+--         else putStrLn ""
 
 launchMachine :: IO ()
 launchMachine = do
@@ -119,15 +120,15 @@ launchMachine = do
 
 start :: Config -> String -> IO ()
 start config input = do
-    let indexes = initIndexes
-    let tapes = initTapes config
-    let currentState = (initial config)
+    let indexes = initIndexes config
+    let tapes = initTapes config input
+    let currentState = initial config
     run config tapes currentState indexes
 
 run :: Config -> [String] -> String -> [Int] -> IO ()
-run config tape currentState index = do
+run config tapes currentState indexes = do
     -- if current state == final state exit
-    if (elem currentState (finals config))
+    if currentState `elem` finals config
         then outputTapes tapes indexes 0
         else do
             outputTapes tapes indexes 0
@@ -138,7 +139,7 @@ run config tape currentState index = do
             -- move heads
             let new_heads = modifyIndexes indexes transition 0
             -- set next state
-            let next_state = (to_state transition)
+            let next_state = to_state transition
             --putStrLn new_tape
             run config new_tapes next_state new_heads
 
@@ -148,40 +149,42 @@ increment x = x + 1
 decrement :: Int -> Int
 decrement x = x - 1
 
-initTapes :: Config -> [String]
-initTapes config = (replicate 1 fully) ++ (replicate ((tapes config) - 1) emptyTape)
+initTapes :: Config -> String -> [String]
+initTapes config input = replicate 1 (fullyTape config input) ++ replicate (nb_tapes config - 1) (emptyTape config input)
 
 initIndexes :: Config -> [Int]
-initIndexes config = replicate ((tapes config) - 1) 1
+initIndexes config = replicate (nb_tapes config - 1) 1
 
 duplicate :: String -> Int -> String
 duplicate str n = concat $ replicate n str
 
 emptyTape :: Config -> String -> String
-emptyTape config str = (blank config) ++ (duplicate (blank config) (length str)) ++ (duplicate (blank config) 10)
+emptyTape config str = blank config ++ duplicate (blank config) (length str) ++ duplicate (blank config) 10
 
 fullyTape :: Config -> String -> String
-fullyTape config str = (blank config) ++ str ++ (duplicate (blank config) 10)
+fullyTape config str = blank config ++ str ++ duplicate (blank config) 10
 
 getNextTransition :: Config -> String-> [String] -> [Int] -> Int-> Transition
-getNextTransition config currentState tapes indexes i = if isGoodTransition (((transtions config) ! currentState) !! i) tapes indexes 0 (tapes config)
-    then ((transtions config) ! currentState) !! i
-    else getNextTransition config currentState tapes indexes i + 1
+getNextTransition config currentState tapes indexes i = if test ((transitions config ! currentState) !! i) tapes indexes 0 (nb_tapes config)
+    then (transitions config ! currentState) !! i
+    else getNextTransition config currentState tapes indexes (i + 1)
 
-isGoodTransition :: Transition -> [String] -> [Int] -> Int -> Int -> Bool
-isGoodTransition transition tapes indexes i max = if i == max
-    then True
-    else (read (transition ! (tapes ++ (i + 1)))) == ((tapes !! i) !! (indexes !! i)) && (isGoodTransition transition tapes indexes (i + 1) max)
+--isGoodTransition :: Transition -> [String] -> [Int] -> Int -> Int -> Bool
+--isGoodTransition transition tapes indexes i max = if (i == max) || ((Main.read (steps transition ! ("tape" ++ (i + 1)))) == ((tapes !! i) !! (indexes !! i)) && (isGoodTransition transition tapes indexes (i + 1) max))
+
+test :: Transition -> [String] -> [Int] -> Int -> Int -> Bool
+test transition tapes indexes i max = (i == max) || (Main.read (steps transition ! ("tape" ++ show (i + 1))) == replicate 1 ((tapes !! i) !! (indexes !! i)) && test transition tapes indexes (i + 1) max)
+
 
 modifyTapes :: [String] -> [Int] -> Transition -> Int -> [String]
-modifyTapes tapes indexes transition i = if i == (length tapes)
-    then []
-    else (replicate 1 ((Data.List.take (indexes !! i) (tapes !! i)) ++ (write (transition ! ("tape" ++ (1 + 1)))) ++ (Data.List.drop ((indexes !! i) + 1) (tapes !! i))) ++ (modifyTapes tapes indexes transition (i + 1))
+modifyTapes tapes indexes transition i = if i == length tapes
+    then replicate 0 ""
+    else replicate 1 (Data.List.take (indexes !! i) (tapes !! i) ++ write (steps transition ! ("tape" ++ show 1)) ++ Data.List.drop ((indexes !! i) + 1) (tapes !! i)) ++ modifyTapes tapes indexes transition (i + 1)
 
 modifyIndexes :: [Int] -> Transition -> Int -> [Int]
-modifyIndexes indexes transition i = if i == (length indexes)
+modifyIndexes indexes transition i = if i == length indexes
     then []
-    else (replicate 1 (updateIndex (indexes !! i) (action (transition ! ("tape" ++ i))))) ++ (modifyIndexes indexes transition (i + 1))
+    else replicate 1 (updateIndex (indexes !! i) (action (steps transition ! ("tape" ++ show i)))) ++ modifyIndexes indexes transition (i + 1)
 
 updateIndex :: Int -> String -> Int
 updateIndex i "RIGHT" = i + 1
@@ -190,6 +193,7 @@ updateIndex i _ = i
 
 outputTapes :: [String] -> [Int] -> Int -> IO ()
 outputTapes tapes indexes i = do
-    if i < (length tapes)
-        then putStrLn ("[" ++ (Data.List.take (indexes !! i) (tapes !! i)) ++ "<" ++ (tapes !! i) ++">" ++ (Data.List.drop ((indexes !! i) + 1) (tapes !! i)) ++ "]")
+    if i < length tapes
+        then putStrLn ("[" ++ Data.List.take (indexes !! i) (tapes !! i) ++ "<" ++ (tapes !! i) ++">" ++ Data.List.drop ((indexes !! i) + 1) (tapes !! i) ++ "]")
+        else putStrLn ""
     outputTapes tapes indexes (i + 1)

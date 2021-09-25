@@ -2,28 +2,28 @@
     "name" : "unary_addition_machine",
     "alphabet" : ["1", "+"],
     "blank" : ".",
-    "tape" : 2,
+    "nb_tapes" : 2,
     "states" : ["add", "HALT"],
     "initial" : "add",
     "finals" : ["HALT"],
     "transitions" : {
         "add" : [
             {
-                "tapes" : {
+                "steps" : {
                     "tape1" : {"read" : "1", "write": "1", "action": "RIGHT"},
                     "tape2" : {"read" : ".", "write": "1", "action": "RIGHT"}
                 },
                 "to_state" : "add"
             },
             {
-                "tapes" : {
+                "steps" : {
                     "tape1" : {"read" : "+", "write": "+", "action": "RIGHT"},
                     "tape2" : {"read" : ".", "write": ".", "action": "STAY"}
                 },
                 "to_state" : "add"
             },
             {
-                "tapes" : {
+                "steps" : {
                     "tape1" : {"read" : ".", "write": ".", "action": "RIGHT"},
                     "tape2" : {"read" : ".", "write": ".", "action": "RIGHT"}
                 },

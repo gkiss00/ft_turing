@@ -2,28 +2,28 @@
     "name" : "0n1n_machine",
     "alphabet" : ["0", "1"],
     "blank" : ".",
-    "tape" : 2,
+    "nb_tapes" : 2,
     "states" : ["init", "cpy", "rmv", "HALT"],
     "initial" : "init",
     "finals" : ["HALT"],
     "transitions" : {
         "init" : [
             {
-                "tapes" : {
+                "steps" : {
                     "tape1" : {"read" : "0", "write": "0", "action": "STAY"},
                     "tape2" : {"read" : ".", "write": ".", "action": "STAY"}
                 },
                 "to_state" : "cpy"
             },
             {
-                "tapes" : {
+                "steps" : {
                     "tape1" : {"read" : "1", "write": "1", "action": "STAY"},
                     "tape2" : {"read" : ".", "write": "n", "action": "STAY"}
                 },
                 "to_state" : "HALT"
             },
             {
-                "tapes" : {
+                "steps" : {
                     "tape1" : {"read" : ".", "write": ".", "action": "STAY"},
                     "tape2" : {"read" : ".", "write": "y", "action": "STAY"}
                 },
