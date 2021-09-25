@@ -1,0 +1,94 @@
+{
+    "name" : "0n1n_machine",
+    "alphabet" : ["0", "1"],
+    "blank" : ".",
+    "tape" : 2,
+    "states" : ["init", "cpy", "rmv", "HALT"],
+    "initial" : "init",
+    "finals" : ["HALT"],
+    "transitions" : {
+        "init" : [
+            {
+                "tapes" : {
+                    "tape1" : {"read" : "0", "write": "0", "action": "STAY"},
+                    "tape2" : {"read" : ".", "write": ".", "action": "STAY"}
+                },
+                "to_state" : "cpy"
+            },
+            {
+                "tapes" : {
+                    "tape1" : {"read" : "1", "write": "1", "action": "STAY"},
+                    "tape2" : {"read" : ".", "write": "n", "action": "STAY"}
+                },
+                "to_state" : "HALT"
+            },
+            {
+                "tapes" : {
+                    "tape1" : {"read" : ".", "write": ".", "action": "STAY"},
+                    "tape2" : {"read" : ".", "write": "y", "action": "STAY"}
+                },
+                "to_state" : "HALT"
+            }
+        ],
+        "cpy" : [
+            {
+                "tapes" : {
+                    "tape1" : {"read" : "0", "write": "0", "action": "RIGHT"},
+                    "tape2" : {"read" : ".", "write": "0", "action": "RIGHT"}
+                },
+                "to_state" : "cpy"
+            },
+            {
+                "tapes" : {
+                    "tape1" : {"read" : "1", "write": "1", "action": "STAY"},
+                    "tape2" : {"read" : ".", "write": ".", "action": "LEFT"}
+                },
+                "to_state" : "rmv"
+            },
+            {
+                "tapes" : {
+                    "tape1" : {"read" : ".", "write": ".", "action": "STAY"},
+                    "tape2" : {"read" : ".", "write": "n", "action": "STAY"}
+                },
+                "to_state" : "HALT"
+            }
+        ],
+        "rmv" : [
+            {
+                "tapes" : {
+                    "tape1" : {"read" : "0", "write": "0", "action": "STAY"},
+                    "tape2" : {"read" : "0", "write": "n", "action": "STAY"}
+                },
+                "to_state" : "HALT"
+            },
+            {
+                "tapes" : {
+                    "tape1" : {"read" : "0", "write": "0", "action": "STAY"},
+                    "tape2" : {"read" : ".", "write": "n", "action": "STAY"}
+                },
+                "to_state" : "HALT"
+            },
+            {
+                "tapes" : {
+                    "tape1" : {"read" : "1", "write": "1", "action": "RIGHT"},
+                    "tape2" : {"read" : "0", "write": ".", "action": "LEFT"}
+                },
+                "to_state" : "rmv"
+            },
+            {
+                "tapes" : {
+                    "tape1" : {"read" : "1", "write": "1", "action": "STAY"},
+                    "tape2" : {"read" : ".", "write": "n", "action": "STAY"}
+                },
+                "to_state" : "HALT"
+            },
+            {
+                "tapes" : {
+                    "tape1" : {"read" : ".", "write": ".", "action": "STAY"},
+                    "tape2" : {"read" : ".", "write": "y", "action": "STAY"}
+                },
+                "to_state" : "HALT"
+            }
+        ]
+    }
+}
