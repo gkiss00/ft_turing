@@ -1,5 +1,5 @@
 {
-    "name" : "unary_addition_machine",
+    "name" : "palindrome_machine",
     "alphabet" : ["a", "b"],
     "blank" : ".",
     "nb_tapes" : 2,

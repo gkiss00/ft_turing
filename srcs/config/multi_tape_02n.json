@@ -1,0 +1,39 @@
+{
+    "name" : "02n_machine",
+    "alphabet" : ["0"],
+    "blank" : ".",
+    "nb_tapes" : 1,
+    "states" : ["odd", "even", "HALT"],
+    "initial" : "even",
+    "finals" : ["HALT"],
+    "transitions" : {
+        "even" : [
+            {
+                "steps" : {
+                    "tape1" : {"read" : "0", "write": "0", "action": "RIGHT"}
+                },
+                "to_state" : "odd"
+            },
+            {
+                "steps" : {
+                    "tape1" : {"read" : ".", "write": "y", "action": "RIGHT"}
+                },
+                "to_state" : "HALT"
+            }
+        ],
+        "odd" : [
+            {
+                "steps" : {
+                    "tape1" : {"read" : "0", "write": "0", "action": "RIGHT"}
+                },
+                "to_state" : "even"
+            },
+            {
+                "steps" : {
+                    "tape1" : {"read" : ".", "write": "n", "action": "RIGHT"}
+                },
+                "to_state" : "HALT"
+            }
+        ]
+    }
+}
