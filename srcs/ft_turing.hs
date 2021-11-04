@@ -107,10 +107,16 @@ launchMachine = do
             outputConfig m
             start m input
 
+duplicate :: String -> Int -> String
+duplicate str n = concat $ replicate n str
+
+fullyTape :: Config -> String -> String
+fullyTape config str = blank config ++ str ++ duplicate (blank config) 10
+
 start :: Config -> String -> IO ()
 start config input = do
     let index = 1
-    let tape = "." ++ input ++ ".........." --should be replaced by blank
+    let tape = fullyTape config input
     let currentState = (initial config);
     run config tape currentState index
 
