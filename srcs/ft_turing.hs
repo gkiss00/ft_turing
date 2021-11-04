@@ -9,6 +9,7 @@
 
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE DeriveGeneric #-}
+{-# OPTIONS_GHC -Wno-incomplete-patterns #-}
 
 -- Import
 import System.Environment
@@ -50,7 +51,13 @@ main = do
 getArg :: Int -> IO String
 getArg i = do
     args <- getArgs
-    return $ args !! i
+    if Data.List.null args
+        then return "--help"
+        else if i >= length args
+            then do
+                error "No tape passed to the machine"
+                return "--help"
+        else return $ args !! i
 
 outputUsage :: IO ()
 outputUsage = do
@@ -66,13 +73,13 @@ outputConfig :: Config -> IO ()
 outputConfig (Config name alphabet blank states initial finals transitions) = do
     putStrLn "****************************************"
     putStrLn ""
-    putStrLn ("          " ++ (name))
+    putStrLn ("          " ++ name)
     putStrLn ""
     putStrLn "****************************************"
-    putStrLn ("alphabet: " ++ (show alphabet))
-    putStrLn ("states:   " ++ (show states))
-    putStrLn ("initial:  " ++ (initial))
-    putStrLn ("finals:   " ++ (show finals))
+    putStrLn ("alphabet: " ++ show alphabet)
+    putStrLn ("states:   " ++ show states)
+    putStrLn ("initial:  " ++ initial)
+    putStrLn ("finals:   " ++ show finals)
     outputTransitions states transitions 0 (length states)
 
 outputTransitions :: [String] -> Map String [Step] -> Int -> Int -> IO ()
@@ -80,7 +87,7 @@ outputTransitions list map i s = do
     if i < s
         then do
             putStrLn (list !! i)
-            if i < (size map)
+            if i < size map
                 then do
                     outputSteps (map ! (list !! i)) 0 (length (map ! (list !! i)))
                 else putStrLn ""
@@ -91,7 +98,7 @@ outputSteps :: [Step] -> Int -> Int -> IO ()
 outputSteps list i size = do
     if i < size
         then do
-            putStrLn ("\t" ++ (show (list !! i)))
+            putStrLn ("\t" ++ show (list !! i))
             outputSteps list (i + 1) size
         else putStrLn ""
 
@@ -117,40 +124,44 @@ start :: Config -> String -> IO ()
 start config input = do
     let index = 1
     let tape = fullyTape config input
-    let currentState = (initial config);
+    let currentState = initial config;
     run config tape currentState index
 
 run :: Config -> String -> String -> Int -> IO ()
 run config tape currentState index = do
     -- if current state == final state exit
-    if (elem currentState (finals config))
+    if currentState `elem` finals config
         then putStrLn ("Result: " ++ tape)
         else do
-            
+
             -- get current state
             let state = getStateToApply config currentState -- list of steps
-            let step = getStepToApply state [(tape !! index)] 0 -- step to apply
-            outputCurrentTape tape index (write step)
-            --  modify tape
-            let new_tape = (Data.List.take index tape) ++ (write step) ++ (Data.List.drop (index + 1) tape)
-            -- move the head
-            let new_index = if (action step) == "RIGHT"
-                then increment index
-                else decrement index
-            -- set next state
-            let next_state = (to_state step)
-            --putStrLn new_tape
-            run config new_tape next_state new_index
+            let step = getStepToApply state [tape !! index] 0 -- step to apply
+            case step of
+                Just sss ->do
+                    outputCurrentTape tape index (write sss)
+                    --  modify tape
+                    let new_tape = Data.List.take index tape ++ write sss ++ Data.List.drop (index + 1) tape
+                    -- move the head
+                    let new_index = if action sss == "RIGHT"
+                        then increment index
+                        else decrement index
+                    -- set next state
+                    let next_state = to_state sss
+                    --putStrLn new_tape
+                    run config new_tape next_state new_index
+                Nothing -> do
+                    putStrLn "Unknown state reached"
 
 outputCurrentTape :: String -> Int -> String -> IO ()
-outputCurrentTape tape index step= do
-    putStrLn ("[" ++ (Data.List.take index tape) ++ "<" ++ step ++">" ++ (Data.List.drop (index + 1) tape) ++ "]")
+outputCurrentTape tape index step = do
+    putStrLn ("[" ++ Data.List.take index tape ++ "<" ++ [tape !! index] ++">" ++ Data.List.drop (index + 1) tape ++ "]")
 
-getStepToApply :: [Step] -> String -> Int -> Step
-getStepToApply steps current index = 
-    if ((Main.read (steps !! index))) == current
-        then (steps !! index)
-    else getStepToApply steps current (index + 1)
+getStepToApply :: [Step] -> String -> Int -> Maybe Step
+getStepToApply steps current index
+  | index >= length steps = Nothing
+  | Main.read (steps !! index) == current = Just (steps !! index)
+  | otherwise = getStepToApply steps current (index + 1)
 
 getStateToApply :: Config -> String -> [Step]
 getStateToApply (Config _ _ _ _ _ _ transitions) currentSate = transitions ! currentSate
